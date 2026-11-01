@@ -128,9 +128,18 @@ python schema/visualizacion.py
 Runs the SPARQL quality-control checks on the generated triples.
 
 ```bash
+
+
 python schema/rdf_validation.py
 ```
 
 ---
 
-<sub>**Collaborators:** Jesús Cano Moya, Izan Cuesta Corbí, Dennis García Solera, Marcos Segurado Llopis.</sub>
+## Collaborators
+
+Developed as a collaborative project at the Universidad de Alicante, BSc in Artificial Intelligence Engineering (2025/26).
+
+- Jesús Cano Moya
+- Izan Cuesta Corbí
+- Dennis García Solera
+- Marcos Segurado Llopis
