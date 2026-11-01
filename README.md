@@ -1,81 +1,84 @@
-﻿# Análisis Semántico de Agua y Cultivos - Comunidad Valenciana
+# Semantic Water & Crop Analytics: Valencian Community
 
-## 👥 Autores
+## Business Objective
 
-Trabajo realizado por:
+Agriculture in the Valencian Community operates under chronic water stress, yet the data needed to plan around it is scattered across heterogeneous public spreadsheets: water consumption, cultivated area and production costs rarely live in the same place, and almost never in a form that can be queried or joined with external context.
 
-* **Jesús Cano Moya**
-* **Izan Cuesta Corbí**
-* **Dennis García Solera**
-* **Marcos Segurado Llopis**
+This project turns those fragmented sources into a **queryable Knowledge Graph** that connects water use, cultivated surface and production cost at municipality level. It lets decision-makers (regional planners, water authorities, agri-business analysts) answer questions such as *where is agricultural investment concentrated, which crop groups drive the highest costs, and how do these patterns differ across provinces*, and it does so on an open, reusable data model rather than a one-off report.
 
 ---
 
-Este proyecto implementa un flujo de **Ingeniería de Datos Semántica** para analizar el consumo de agua, la superficie cultivada y los costes de producción en el sector agrícola de la **Comunidad Valenciana**.
+## Business Value
 
-El sistema transforma datos crudos (ETL con Pentaho) en un **Grafo de Conocimiento (Knowledge Graph)** utilizando la ontología **Schema.org**, enriqueciendo los datos con **Wikidata** y generando visualizaciones analíticas avanzadas.
-
----
-
-## Características Principales
-
-* **ETL & Limpieza:** Preprocesamiento de datos públicos (Excel) mediante **Pentaho Data Integration (PDI)**.
-* **Modelado Semántico:** Transformación de datos tabulares a grafo RDF utilizando `rdflib` y el vocabulario **Schema.org** (`Place`, `Event`, `Product`, `QuantitativeValue`).
-* **Enriquecimiento Linked Data:** Conexión automática con **Wikidata** para obtener coordenadas geográficas, población y taxonomía de cultivos.
-* **Validación SPARQL:** Scripts de control de calidad para asegurar la integridad de las tripletas generadas.
-* **Visualización Geoespacial:** Mapas de calor interactivos y analítica descriptiva generada directamente desde consultas al grafo RDF.
+* **Single source of truth:** Raw public Excel files are consolidated into one semantic model, removing manual reconciliation across sources.
+* **Interoperable by design:** Data is modeled with the **Schema.org** vocabulary and linked to **Wikidata**, so it can be combined with any other Linked Data source without custom integration work.
+* **Decision-ready geography:** Automatic enrichment with coordinates, population and crop taxonomy turns anonymous rows into geolocated, comparable entities.
+* **Trustworthy outputs:** SPARQL-based validation checks the integrity of the generated triples before any analysis is built on top of them.
+* **Reproducible pipeline:** The full flow, from raw data to maps and charts, runs end to end with a few commands.
 
 ---
 
-## Visualizaciones y Resultados
+## Key Results
 
-El proyecto genera visualizaciones basadas en la explotación de los datos semánticos:
+Every visualization below is generated directly from SPARQL queries against the RDF graph, not from the original spreadsheets.
 
-### 1. Mapa de Calor de Inversión Agrícola (€)
-Mapa interactivo generado con `Folium` que geolocaliza los municipios y muestra la densidad del coste estimado de producción.
+### 1. Agricultural Investment Heatmap (€)
 
-> ⚠️ **Nota:** GitHub no renderiza mapas interactivos. La siguiente imagen es una vista previa estática. Para interactuar con el mapa (zoom, clicks en municipios), descargue el archivo [`mapa_calor_costes.html`](schema/outputs/mapa_calor_costes.html).
+An interactive `Folium` map that geolocates municipalities and shows the density of estimated production cost, making investment hotspots visible at a glance.
 
-| Vista Previa del Mapa |
+> **Note:** GitHub does not render interactive maps. The image below is a static preview. To zoom and click through municipalities, download [`mapa_calor_costes.html`](schema/outputs/mapa_calor_costes.html).
+
+| Map Preview |
 |:---:|
-| <img src="schema/outputs/image.png" width="800" alt="Captura del Mapa de Calor"> |
-| *Zonas de calor basadas en el coste total de producción (€).* |
+| <img src="schema/outputs/image.png" width="800" alt="Heatmap of agricultural production costs"> |
+| *Heat zones based on total production cost (€).* |
 
-### 2. Top 5 Cultivos por Coste de Producción
-Comparativa por provincias (Alicante, Castellón, Valencia) de los grupos de cultivo que generan mayor coste económico.
+### 2. Top 5 Crops by Production Cost
 
-> **Nota:** Las gráficas se generan automáticamente en la carpeta `schema/outputs/`.
+A comparison across the three provinces (Alicante, Castellón, Valencia) of the crop groups that generate the highest economic cost.
 
-| Estadística por Provincia |
+> Charts are generated automatically in `schema/outputs/`.
+
+| Province-Level Breakdown |
 |:---:|
-| <img src="schema/outputs/grafica_cultivos_top5.png" width="800" alt="Ejemplo de Grafica de Costes"> |
-| *Visualización de las zonas de mayor inversión económica en agricultura en la C. Valenciana.* |
+| <img src="schema/outputs/grafica_cultivos_top5.png" width="800" alt="Top 5 crops by production cost per province"> |
+| *Where the largest agricultural investment concentrates across the Valencian Community.* |
 
 ---
 
-## Tecnologías Utilizadas
+## Tech Stack
 
-* **Lenguaje:** Python 3.12
-* **Librerías Semánticas:** `rdflib`, `SPARQLWrapper`
-* **Análisis y Visualización:** `pandas`, `matplotlib`, `seaborn`, `folium`
-* **ETL:** Pentaho Data Integration (Kettle)
-* **Ontologías:** Schema.org, Wikidata Entity/Property
+| Layer | Tools |
+|---|---|
+| **Language** | Python 3.12 |
+| **ETL** | Pentaho Data Integration (Kettle) |
+| **Semantic Web** | `rdflib`, `SPARQLWrapper` |
+| **Ontologies / Linked Data** | Schema.org (`Place`, `Event`, `Product`, `QuantitativeValue`), Wikidata entities and properties |
+| **Analysis & Visualization** | `pandas`, `matplotlib`, `seaborn`, `folium` |
+
+**How the pieces fit together**
+
+1. **ETL & cleaning:** Public Excel sources are preprocessed with Pentaho into a clean CSV.
+2. **Semantic modeling:** The tabular data is transformed into an RDF graph with `rdflib`.
+3. **Linked Data enrichment:** The graph is connected to Wikidata to add coordinates, population and crop taxonomy.
+4. **Validation:** SPARQL quality checks verify the integrity of the generated triples.
+5. **Visualization:** Maps and charts are produced straight from graph queries.
 
 ---
 
-## Estructura del Proyecto
+## Repository Structure
 
 ```text
 .
-├── datos/                      # Fuentes de datos originales (Excel/XLSX)
-├── pentaho/                    # Procesos ETL (.ktr, .kjb) y CSV limpio
+├── datos/                      # Original data sources (Excel/XLSX)
+├── pentaho/                    # ETL processes (.ktr, .kjb) and cleaned CSV
 │   └── resultado_proyecto_agua.csv
-├── schema/                     # Código Fuente Python
-│   ├── rdf_transformacion.py       # Generación de tripletas RDF
-│   ├── enriquecimiento_wikidata.py # Conexión con Wikidata API
-│   ├── rdf_validation.py           # Tests y consultas SPARQL
-│   ├── visualizacion.py            # Generación de mapas y gráficas
-│   └── outputs/                    # RESULTADOS (Grafos y Visualizaciones)
+├── schema/                     # Python source code
+│   ├── rdf_transformacion.py       # RDF triple generation
+│   ├── enriquecimiento_wikidata.py # Wikidata API enrichment
+│   ├── rdf_validation.py           # SPARQL tests and quality checks
+│   ├── visualizacion.py            # Map and chart generation
+│   └── outputs/                    # RESULTS (graphs and visualizations)
 │       ├── datos_agricolas.ttl
 │       ├── datos_agricolas_enriquecido.ttl
 │       ├── mapa_calor_costes.html
@@ -84,33 +87,50 @@ Comparativa por provincias (Alicante, Castellón, Valencia) de los grupos de cul
 └── README.md
 ```
 
-## Instalación y Ejecución
+---
 
-### 1. Requisitos Previos
-Asegúrate de tener Python instalado. Instala las dependencias necesarias:
+## Setup & Execution
+
+### 1. Prerequisites
+
+Make sure Python 3.12 is installed, then install the dependencies:
 
 ```bash
-pip install rdflib pandas matplotlib seaborn folium requests
+pip install rdflib SPARQLWrapper pandas matplotlib seaborn folium requests
 ```
 
-### 2. Ejecución del Pipeline
+### 2. Run the Pipeline
 
-El proyecto está diseñado para ejecutarse secuencialmente desde la carpeta `schema/`:
+The pipeline runs sequentially. Execute the commands from the repository root:
 
-**Paso 1: Transformación a RDF**
-Convierte el CSV procesado por Pentaho a formato Turtle (`.ttl`).
+**Step 1: Transform to RDF**
+Converts the Pentaho-processed CSV into Turtle (`.ttl`) format.
 
 ```bash
 python schema/rdf_transformacion.py
 ```
-**Paso 2: Enriquecimiento con Wikidata Añade coordenadas y datos externos al grafo.**
+
+**Step 2: Enrich with Wikidata**
+Adds coordinates and external data to the graph.
+
 ```bash
 python schema/enriquecimiento_wikidata.py
 ```
 
-**Paso 3: Visualización Genera el mapa HTML y las gráficas estadísticas en la carpeta outputs.**
+**Step 3: Generate Visualizations**
+Produces the HTML heatmap and statistical charts in `schema/outputs/`.
 
 ```bash
 python schema/visualizacion.py
-
 ```
+
+**Optional: Validate the Graph**
+Runs the SPARQL quality-control checks on the generated triples.
+
+```bash
+python schema/rdf_validation.py
+```
+
+---
+
+<sub>**Collaborators:** Jesús Cano Moya, Izan Cuesta Corbí, Dennis García Solera, Marcos Segurado Llopis.</sub>
