@@ -1,0 +1,116 @@
+﻿# Análisis Semántico de Agua y Cultivos - Comunidad Valenciana
+
+## 👥 Autores
+
+Trabajo realizado por:
+
+* **Jesús Cano Moya**
+* **Izan Cuesta Corbí**
+* **Dennis García Solera**
+* **Marcos Segurado Llopis**
+
+---
+
+Este proyecto implementa un flujo de **Ingeniería de Datos Semántica** para analizar el consumo de agua, la superficie cultivada y los costes de producción en el sector agrícola de la **Comunidad Valenciana**.
+
+El sistema transforma datos crudos (ETL con Pentaho) en un **Grafo de Conocimiento (Knowledge Graph)** utilizando la ontología **Schema.org**, enriqueciendo los datos con **Wikidata** y generando visualizaciones analíticas avanzadas.
+
+---
+
+## Características Principales
+
+* **ETL & Limpieza:** Preprocesamiento de datos públicos (Excel) mediante **Pentaho Data Integration (PDI)**.
+* **Modelado Semántico:** Transformación de datos tabulares a grafo RDF utilizando `rdflib` y el vocabulario **Schema.org** (`Place`, `Event`, `Product`, `QuantitativeValue`).
+* **Enriquecimiento Linked Data:** Conexión automática con **Wikidata** para obtener coordenadas geográficas, población y taxonomía de cultivos.
+* **Validación SPARQL:** Scripts de control de calidad para asegurar la integridad de las tripletas generadas.
+* **Visualización Geoespacial:** Mapas de calor interactivos y analítica descriptiva generada directamente desde consultas al grafo RDF.
+
+---
+
+## Visualizaciones y Resultados
+
+El proyecto genera visualizaciones basadas en la explotación de los datos semánticos:
+
+### 1. Mapa de Calor de Inversión Agrícola (€)
+Mapa interactivo generado con `Folium` que geolocaliza los municipios y muestra la densidad del coste estimado de producción.
+
+> ⚠️ **Nota:** GitHub no renderiza mapas interactivos. La siguiente imagen es una vista previa estática. Para interactuar con el mapa (zoom, clicks en municipios), descargue el archivo [`mapa_calor_costes.html`](schema/outputs/mapa_calor_costes.html).
+
+| Vista Previa del Mapa |
+|:---:|
+| <img src="schema/outputs/image.png" width="800" alt="Captura del Mapa de Calor"> |
+| *Zonas de calor basadas en el coste total de producción (€).* |
+
+### 2. Top 5 Cultivos por Coste de Producción
+Comparativa por provincias (Alicante, Castellón, Valencia) de los grupos de cultivo que generan mayor coste económico.
+
+> **Nota:** Las gráficas se generan automáticamente en la carpeta `schema/outputs/`.
+
+| Estadística por Provincia |
+|:---:|
+| <img src="schema/outputs/grafica_cultivos_top5.png" width="800" alt="Ejemplo de Grafica de Costes"> |
+| *Visualización de las zonas de mayor inversión económica en agricultura en la C. Valenciana.* |
+
+---
+
+## Tecnologías Utilizadas
+
+* **Lenguaje:** Python 3.12
+* **Librerías Semánticas:** `rdflib`, `SPARQLWrapper`
+* **Análisis y Visualización:** `pandas`, `matplotlib`, `seaborn`, `folium`
+* **ETL:** Pentaho Data Integration (Kettle)
+* **Ontologías:** Schema.org, Wikidata Entity/Property
+
+---
+
+## Estructura del Proyecto
+
+```text
+.
+├── datos/                      # Fuentes de datos originales (Excel/XLSX)
+├── pentaho/                    # Procesos ETL (.ktr, .kjb) y CSV limpio
+│   └── resultado_proyecto_agua.csv
+├── schema/                     # Código Fuente Python
+│   ├── rdf_transformacion.py       # Generación de tripletas RDF
+│   ├── enriquecimiento_wikidata.py # Conexión con Wikidata API
+│   ├── rdf_validation.py           # Tests y consultas SPARQL
+│   ├── visualizacion.py            # Generación de mapas y gráficas
+│   └── outputs/                    # RESULTADOS (Grafos y Visualizaciones)
+│       ├── datos_agricolas.ttl
+│       ├── datos_agricolas_enriquecido.ttl
+│       ├── mapa_calor_costes.html
+│       ├── grafica_cultivos_top5.png
+│       └── image.png
+└── README.md
+```
+
+## Instalación y Ejecución
+
+### 1. Requisitos Previos
+Asegúrate de tener Python instalado. Instala las dependencias necesarias:
+
+```bash
+pip install rdflib pandas matplotlib seaborn folium requests
+```
+
+### 2. Ejecución del Pipeline
+
+El proyecto está diseñado para ejecutarse secuencialmente desde la carpeta `schema/`:
+
+**Paso 1: Transformación a RDF**
+Convierte el CSV procesado por Pentaho a formato Turtle (`.ttl`).
+
+```bash
+python schema/rdf_transformacion.py
+```
+**Paso 2: Enriquecimiento con Wikidata Añade coordenadas y datos externos al grafo.**
+```bash
+python schema/enriquecimiento_wikidata.py
+```
+
+**Paso 3: Visualización Genera el mapa HTML y las gráficas estadísticas en la carpeta outputs.**
+
+```bash
+python schema/visualizacion.py
+
+```
